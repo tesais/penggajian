@@ -79,7 +79,6 @@ class DataJabatan extends CI_Controller
 			$uang_makan = $this->input->post('uang_makan');
 
 			$data = array(
-
 				'nama_jabatan' => $nama_jabatan,
 				'gaji_pokok' => $gaji_pokok,
 				'tj_transport' => $tj_transport,
@@ -90,17 +89,20 @@ class DataJabatan extends CI_Controller
 				'id_jabatan' => $id
 			);
 
-			$this->penggajianModel->update_data($data, 'data_jabatan', $data, $where);
+			// Panggil metode update_data dari model dengan parameter yang benar
+			$this->penggajianModel->update_data('data_jabatan', $data, $where);
+
 			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Data berhasil diupdate!</strong> 
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-                </div>');
+				<strong>Data berhasil diupdate!</strong> 
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+				</div>');
 			redirect('admin/dataJabatan');
 		}
-
 	}
+
+
 	public function _rules()
 	{
 		$this->form_validation->set_rules('nama_jabatan', 'nama jabatan', 'required');
