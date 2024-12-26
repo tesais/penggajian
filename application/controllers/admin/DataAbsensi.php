@@ -2,37 +2,43 @@
 
 class DataAbsensi extends CI_Controller
 {
+	public function index()
+	{
+		$data['title'] = "Data Absensi Pegawai";
 
-    public function index()
-    {
-        $data['title'] = "Data Absensi Pegawai";
+		// Cek apakah filter bulan diinputkan
+		if (isset($_GET['bulan']) && $_GET['bulan'] != '') {
+			$bulan = $_GET['bulan'];
 
-        if ((isset($_GET['bulan']) && $_GET['bulan'] != '') && (isset($_GET['tahun']) && $_GET['tahun'] != '')) {
-            $bulan = $_GET['bulan'];
-            $tahun = $_GET['tahun'];
-            $bulantahun = $bulan . $tahun;
-        } else {
-            $bulan = date('m');
-            $tahun = date('Y');
-            $bulantahun = $bulan . $tahun;
-        }
+			// Query dengan filter bulan
+			$data['absensi'] = $this->db->query("
+				SELECT 
+					data_kehadiran.*, 
+					data_kehadiran.nama_karyawan AS nama_pegawai, 
+					data_kehadiran.jenis_kelamin, 
+					data_kehadiran.nama_jabatan AS jabatan
+				FROM data_kehadiran
+				WHERE data_kehadiran.bulan = '$bulan'
+				ORDER BY data_kehadiran.nama_karyawan ASC
+			")->result();
+		} else {
+			// Jika tidak ada filter, tampilkan semua data
+			$data['absensi'] = $this->db->query("
+				SELECT 
+					data_kehadiran.*, 
+					data_kehadiran.nama_karyawan AS nama_pegawai, 
+					data_kehadiran.jenis_kelamin, 
+					data_kehadiran.nama_jabatan AS jabatan
+				FROM data_kehadiran
+				ORDER BY data_kehadiran.nama_karyawan ASC
+			")->result();
+		}
 
-
-        $data['absensi'] = $this->query("SELECT data_kehadiran.*, data_pegawai.nama_pegawai, data_pegawai.jenis_kelamin,
-         data_pegawai.jabatan
-        FROM data_kehadiran
-        LEFT JOIN data_pegawai ON data_kehadiran.nik=data_pegawai.nik
-        LEFT JOIN data_jabatan ON data_pegawai.jabatan = data_jabatan.nama_jabatan
-        WHERE data_kehadiran.bulan= '$bulantahun'
-        ORDER BY data_pegawai.nama_pegawai ASC")->result();
-
-        $this->load->view('templates_admin/header', $data);
-        $this->load->view('templates_admin/sidebar');
-        $this->load->view('admin/dataAbsensi', $data);
-        $this->load->view('templates_admin/footer');
-    }
+		// Kirim data ke view
+		$this->load->view('templates_admin/header', $data);
+		$this->load->view('templates_admin/sidebar');
+		$this->load->view('admin/dataAbsensi', $data);
+		$this->load->view('templates_admin/footer');
+	}
 }
-
-
-
 ?>
